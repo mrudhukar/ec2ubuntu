@@ -1,0 +1,44 @@
+arch=i386 | amd64
+ami= ami-88f504e1 | ami-f8f40591
+
+
+instanceid=$(ec2-run-instances --key chronus-ec2-keypair --availability-zone us-east-1a  ami-88f504e1 |  egrep ^INSTANCE | cut -f2)
+echo "instanceid=$instanceid"
+
+while host=$(ec2-describe-instances "$instanceid" |
+  egrep ^INSTANCE | cut -f4) && test -z $host; do echo -n .; sleep 1; done
+echo host=$host
+
+rsync --rsh="ssh" --rsync-path="sudo rsync" ~/ec2_keys/{cert,pk}-*.pem ubuntu@$host:/mnt/
+rsync -rlvzcC --delete --exclude='output*' --rsync-path="sudo rsync" --exclude='.git' --rsh='ssh' rails_apps/ec2onrails ubuntu@$host:/mnt/
+rsync -rlvzcC --delete --exclude='output*' --rsync-path="sudo rsync" --rsh='ssh' rails_apps/ec2ubuntu ubuntu@$host:/mnt/
+
+ssh ubuntu@$host
+
+sudo -i -u root
+has_multi=`grep multiverse /etc/apt/sources.list`
+if [ "" = "$has_multi" ] ; then
+echo "deb http://us.archive.ubuntu.com/ubuntu/ lucid multiverse" >> /etc/apt/sources.list
+echo "deb-src http://us.archive.ubuntu.com/ubuntu/ lucid multiverse" >> /etc/apt/sources.list
+echo "deb http://us.archive.ubuntu.com/ubuntu/ lucid-updates multiverse" >> /etc/apt/sources.list
+echo "deb-src http://us.archive.ubuntu.com/ubuntu/ lucid-updates multiverse" >> /etc/apt/sources.list
+apt-get -y update
+fi
+
+aptitude install ruby1.8-dev ruby1.8 ri1.8 rdoc1.8 irb1.8 libreadline-ruby1.8 libruby1.8 libopenssl-ruby -y
+ln -s /usr/bin/ruby1.8 /usr/bin/ruby
+ln -s /usr/bin/ri1.8 /usr/bin/ri
+ln -s /usr/bin/rdoc1.8 /usr/bin/rdoc
+ln -s /usr/bin/irb1.8 /usr/bin/irb
+
+
+
+ruby /mnt/ec2onrails/server/build --bucket testeconrails --prefix ec2onrails-custom --arch i386 --user 3801-5292-6876 \
+--access-key 11YWGV5X50MCM7F4GQR2 \
+--secret-key pxtv2+t+CqK/px3QvueEuQpJQgD3igP/qEyNsRvC \
+--private-key /mnt/pk-XXV7NJWFXESTM45G2MBE525PM7RR5BYP.pem \
+--cert /mnt/cert-XXV7NJWFXESTM45G2MBE525PM7RR5BYP.pem
+
+
+
+#ec2-register --name "testeconrails/ec2onrails-custom" testeconrails/ec2onrails-custom.manifest.xml
