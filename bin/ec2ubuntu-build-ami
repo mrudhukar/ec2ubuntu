@@ -406,6 +406,7 @@ while [ $# -gt 0 ]; do
   esac
 done
 
+#XXX CODENAME SPECIFIC
 codename=lucid
 release=10.04
 distribution=ubuntu
@@ -512,22 +513,17 @@ fi
 # To build kernel modules yourself, see:
 # http://alestic.com/2008/05/kernel-modules-2-6-21
 
+#XXX CODENAME SPECIFIC Kernel and Packages.
+# For packages look at http://packages.ubuntu.com/#{codename}/admin/linux-image-#{latest}-ec2
 if [ ! "$kernel" -a ! "$modules" ]; then
   if [ $bsarch = 'amd64' ]; then
         kernel=aki-74f4051d
         packages="$packages linux-image-2.6.32-310-ec2"
         modules=
-    # http://alestic-downloads.s3.amazonaws.com/ec2-kernel-modules-2.6.21.i686-20080722.tar.gz
-    # http://ec2-downloads.s3.amazonaws.com/ec2-modules-2.6.18-xenU-ec2-v1.0-x86_64.tgz
-    # http://ec2-downloads.s3.amazonaws.com/ec2-modules-2.6.21-2952.fc8xen-x86_64.tgz
-
   elif [ $bsarch = 'i386' ]; then
         kernel=aki-3af50453
         packages="$packages linux-image-2.6.32-310-ec2"
         modules=
-    # http://alestic-downloads.s3.amazonaws.com/ec2-kernel-modules-2.6.21.i686-20080722.tar.gz
-    # http://ec2-downloads.s3.amazonaws.com/ec2-modules-2.6.18-xenU-ec2-v1.0-i686.tgz
-    # http://ec2-downloads.s3.amazonaws.com/ec2-modules-2.6.21-2952.fc8xen-i686.tgz
   else
     echo >&2 "$0: Unrecognized --arch $bsarch"
     exit 1
@@ -546,6 +542,7 @@ exit 101
 EOF
 chmod 755 $imagedir/usr/sbin/policy-rc.d
 
+#XXX CODENAME SPECIFIC The BSVER and BSDIR
 # Bootstrap Ubuntu
 BSURL=http://us.archive.ubuntu.com/ubuntu/pool/main/d/debootstrap
 BSVER=debootstrap_1.0.25ubuntu2

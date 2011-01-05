@@ -27,20 +27,13 @@ fi
 
 apt-get install -y ec2-api-tools ec2-ami-tools
 
-aptitude install ruby1.8-dev ruby1.8 ri1.8 rdoc1.8 irb1.8 libreadline-ruby1.8 libruby1.8 libopenssl-ruby -y
-ln -s /usr/bin/ruby1.8 /usr/bin/ruby
-ln -s /usr/bin/ri1.8 /usr/bin/ri
-ln -s /usr/bin/rdoc1.8 /usr/bin/rdoc
-ln -s /usr/bin/irb1.8 /usr/bin/irb
-
-
-
-ruby /mnt/ec2onrails/server/build --bucket testeconrails --prefix ec2onrails-custom --arch i386 --user 3801-5292-6876 \
---access-key 11YWGV5X50MCM7F4GQR2 \
---secret-key pxtv2+t+CqK/px3QvueEuQpJQgD3igP/qEyNsRvC \
---private-key /mnt/pk-XXV7NJWFXESTM45G2MBE525PM7RR5BYP.pem \
---cert /mnt/cert-XXV7NJWFXESTM45G2MBE525PM7RR5BYP.pem
+ruby /mnt/ec2onrails/server/build --bucket testeconrails --prefix ec2onrails-custom --arch i386 --user USERID \
+--access-key ACCESS_KEY \
+--secret-key SECRET KEY \
+--private-key PRIVATE_KEY \
+--cert CERT
 
 
 
 #ec2-register --name "testeconrails/ec2onrails-custom" testeconrails/ec2onrails-custom.manifest.xml
+#ec2-terminate-instances $instanceid
