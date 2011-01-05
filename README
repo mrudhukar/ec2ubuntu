@@ -34,6 +34,5 @@ ruby /mnt/ec2onrails/server/build --bucket testeconrails --prefix ec2onrails-cus
 --cert CERT
 
 
-
-#ec2-register --name "testeconrails/ec2onrails-custom" testeconrails/ec2onrails-custom.manifest.xml
+#ec2-register --name "testeconrails/ec2onrails-custom" testeconrails/ec2onrails-custom.manifest.xml --private-key PRIVATE_KEY --cert CERT
 #ec2-terminate-instances $instanceid

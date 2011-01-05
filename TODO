@@ -1,2 +1,3 @@
 1. Clone the repos from git instead of rsync (Steps in Readme)
 2. Comment about the minimum kernel version required for debootstrap lucid
+3. Proper installation of ami tools in the image
