@@ -518,11 +518,11 @@ fi
 if [ ! "$kernel" -a ! "$modules" ]; then
   if [ $bsarch = 'amd64' ]; then
         kernel=aki-74f4051d
-        packages="$packages linux-image-2.6.32-310-ec2"
+        packages="$packages linux-image-2.6.32-311-ec2"
         modules=
   elif [ $bsarch = 'i386' ]; then
         kernel=aki-3af50453
-        packages="$packages linux-image-2.6.32-310-ec2"
+        packages="$packages linux-image-2.6.32-311-ec2"
         modules=
   else
     echo >&2 "$0: Unrecognized --arch $bsarch"
