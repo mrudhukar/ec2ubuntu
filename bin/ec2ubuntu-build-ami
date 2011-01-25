@@ -372,7 +372,7 @@
 svnpath=http://ec2ubuntu.googlecode.com/svn-history/r183
 originaldir=$(/bin/pwd)
 
-packages="openssh-server rsync ruby openssl curl ca-certificates libopenssl-ruby patch alien runurl"
+packages="openssh-server rsync ruby openssl curl ca-certificates libopenssl-ruby runurl ec2-ami-tools"
 
 while [ $# -gt 0 ]; do
   case $1 in
@@ -649,37 +649,6 @@ cat <<'EOF' >>$imagedir/etc/ssh/sshd_config
 UseDNS no
 EOF
 
-# Install Amazon EC2 AMI tools
-curl -L -o $imagedir/tmp/ec2-ami-tools.noarch.rpm \
-  http://s3.amazonaws.com/ec2-downloads/ec2-ami-tools-$tools_version.noarch.rpm
-chroot $imagedir alien -i --scripts /tmp/ec2-ami-tools.noarch.rpm 
-# Ubuntu archives tend to be out of date, so prevent downgrades
-cat >>$imagedir/etc/apt/preferences <<EOF
-Package: ec2-ami-tools
-Pin: version $tools_version
-Pin-Priority: 500
-EOF
-
-ln -s /usr/lib/site_ruby/aes $imagedir/usr/local/lib/site_ruby/1.8/aes
-ln -s /usr/lib/site_ruby/ec2 $imagedir/usr/local/lib/site_ruby/1.8/ec2
-
-# Make sure the new image doesn't try to remember a hardcoded mac address.
-chroot $imagedir patch -d /usr/lib/site_ruby/ec2/platform/linux <<'EOF'
---- image.rb.orig	2008-11-27 04:58:36.964214178 -0800
-+++ image.rb	2008-11-27 05:00:25.095464580 -0800
-@@ -26,7 +26,9 @@
-       # Symbolic links are preserved.      
-       class Image
-         IMG_MNT = '/mnt/img-mnt'
--        EXCLUDES= ['/dev', '/media', '/mnt', '/proc', '/sys']
-+        EXCLUDES= ['/dev', '/media', '/mnt', '/proc', '/sys',
-+                   '/etc/udev/rules.d/70-persistent-net.rules',
-+                   '/etc/udev/rules.d/z25_persistent-net.rules' ]
-         DEFAULT_FSTAB = EC2::Platform::Linux::Fstab::DEFAULT      
-         LEGACY_FSTAB  = EC2::Platform::Linux::Fstab::LEGACY
-       
-EOF
-
 # Download and install startup scripts.
 install_init(){
   script=$1
@@ -748,10 +717,7 @@ unset DEBIAN_FRONTEND
 cd $builddir
 
 # cleanup
-#if [ "$codename" != "dapper" -a "$codename" != "etch" ]; then
-#  chroot $imagedir apt-get -y autoremove --purge patch alien
-#fi
-
+chroot $imagedir apt-get -y autoremove
 chroot $imagedir apt-get clean
 rm -rf $imagedir/usr/sbin/policy-rc.d         \
        $imagedir/var/log/{bootstrap,dpkg}.log \
