@@ -8,8 +8,7 @@ while host=$(ec2-describe-instances "$instanceid" |
   egrep ^INSTANCE | cut -f4) && test -z $host; do echo -n .; sleep 1; done
 echo host=$host
 
-h2. For EBS following additional steps are required
-
+For EBS following additional steps are required
 1. Create an ebs volume of size 10GB on the same availability zone as the target server. Verify the availability zone of the server before doing this because if the volume is created in a different machine, it won't be accessible!!
    ec2-create-volume  --size 10 --availability-zone us-east-1a
 2. Wait for the volume to be created (check status by doing )
@@ -25,9 +24,8 @@ h2. For EBS following additional steps are required
    mount /dev/sdh /mnt/build
 
 
-h3. These are common for both instance store and ebs
-
-rsync --rsh="ssh" --rsync-path="sudo rsync" ~/ec2_keys/{cert,pk}-\*.pem ubuntu@$host:/mnt/
+These are common for both instance store and ebs
+rsync --rsh="ssh" --rsync-path="sudo rsync" ~/ec2_keys/{cert,pk}-*.pem ubuntu@$host:/mnt/
 rsync -rlvzcC --delete --exclude='output*' --rsync-path="sudo rsync" --exclude='.git' --rsh='ssh' rails_apps/ec2onrails ubuntu@$host:/mnt/
 rsync -rlvzcC --delete --exclude='output*' --rsync-path="sudo rsync" --rsh='ssh' rails_apps/ec2ubuntu ubuntu@$host:/mnt/
 
@@ -45,7 +43,7 @@ fi
 
 apt-get install -y ec2-api-tools ec2-ami-tools
 
-<i>For EBS you should not pass bucket, prefix but pass --ebs</i>
+For EBS you should not pass bucket, prefix but pass --ebs
 ruby /mnt/ec2onrails/server/build --bucket testeconrails --prefix ec2onrails-custom --arch <arch> --user USERID \
 --access-key ACCESS_KEY \
 --secret-key SECRET KEY \
