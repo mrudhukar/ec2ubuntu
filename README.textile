@@ -25,9 +25,9 @@ h2. For EBS following additional steps are required
    mount /dev/sdh /mnt/build
 
 
-h3. These are common for both instance store and ebs*
+h3. These are common for both instance store and ebs
 
-rsync --rsh="ssh" --rsync-path="sudo rsync" ~/ec2_keys/{cert,pk}-*.pem ubuntu@$host:/mnt/
+rsync --rsh="ssh" --rsync-path="sudo rsync" ~/ec2_keys/{cert,pk}-\*.pem ubuntu@$host:/mnt/
 rsync -rlvzcC --delete --exclude='output*' --rsync-path="sudo rsync" --exclude='.git' --rsh='ssh' rails_apps/ec2onrails ubuntu@$host:/mnt/
 rsync -rlvzcC --delete --exclude='output*' --rsync-path="sudo rsync" --rsh='ssh' rails_apps/ec2ubuntu ubuntu@$host:/mnt/
 
