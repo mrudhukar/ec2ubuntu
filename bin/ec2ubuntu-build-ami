@@ -765,10 +765,11 @@ then
 
   set +x
   cat <<EOF
-     Now you might want to run this command:
-     ec2-register --name "$bucket/$prefix" $bucket/$prefix.manifest.xml
-  EOF
 
+Now you might want to run this command:
+  ec2-register --name "$bucket/$prefix" $bucket/$prefix.manifest.xml
+
+EOF
 else
   fstab=$builddir/etc/fstab
   mount_entry=`mount | grep $builddir`
