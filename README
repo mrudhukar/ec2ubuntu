@@ -1,14 +1,30 @@
 arch=i386 | amd64
 ami= ami-88f504e1 | ami-f8f40591
 
-
-instanceid=$(ec2-run-instances --key chronus-ec2-keypair --availability-zone us-east-1a  ami-88f504e1 |  egrep ^INSTANCE | cut -f2)
+instanceid=$(ec2-run-instances --key chronus-ec2-keypair --availability-zone us-east-1a  <ami> |  egrep ^INSTANCE | cut -f2)
 echo "instanceid=$instanceid"
 
 while host=$(ec2-describe-instances "$instanceid" |
   egrep ^INSTANCE | cut -f4) && test -z $host; do echo -n .; sleep 1; done
 echo host=$host
 
+<b>For EBS following additional steps are required</b>
+1. Create an ebs volume of size 10GB on the same availability zone as the target server. Verify the availability zone of the server before doing this because if the volume is created in a different machine, it won't be accessible!!
+   ec2-create-volume  --size 10 --availability-zone us-east-1a
+2. Wait for the volume to be created (check status by doing )
+   ec2dvol <volume-id-output-in-the-previous-step>
+3. Boot an instance using the above steps
+4. Attach the volume to the target instance: (note target instance needs to be present in same avialabilty zone)
+   ec2-attach-volume <volume-id> -i $instanceid -d /dev/sdh
+5. Verify if the attachment has happened:
+   ec2-describe-volumes <volume-id>
+6. Login to the instance and mount the volume
+   mkfs -t ext3 /dev/sdh
+   mkdir -p /mnt/build
+   mount /dev/sdh /mnt/build
+
+
+<b>These are common for both instance store and ebs</b>
 rsync --rsh="ssh" --rsync-path="sudo rsync" ~/ec2_keys/{cert,pk}-*.pem ubuntu@$host:/mnt/
 rsync -rlvzcC --delete --exclude='output*' --rsync-path="sudo rsync" --exclude='.git' --rsh='ssh' rails_apps/ec2onrails ubuntu@$host:/mnt/
 rsync -rlvzcC --delete --exclude='output*' --rsync-path="sudo rsync" --rsh='ssh' rails_apps/ec2ubuntu ubuntu@$host:/mnt/
@@ -27,7 +43,8 @@ fi
 
 apt-get install -y ec2-api-tools ec2-ami-tools
 
-ruby /mnt/ec2onrails/server/build --bucket testeconrails --prefix ec2onrails-custom --arch i386 --user USERID \
+<i>For EBS you should not pass bucket, prefix but pass --ebs</i>
+ruby /mnt/ec2onrails/server/build --bucket testeconrails --prefix ec2onrails-custom --arch <arch> --user USERID \
 --access-key ACCESS_KEY \
 --secret-key SECRET KEY \
 --private-key PRIVATE_KEY \
