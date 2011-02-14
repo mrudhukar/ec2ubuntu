@@ -545,8 +545,8 @@ chmod 755 $imagedir/usr/sbin/policy-rc.d
 #XXX CODENAME SPECIFIC The BSVER and BSDIR
 # Bootstrap Ubuntu
 BSURL=http://us.archive.ubuntu.com/ubuntu/pool/main/d/debootstrap
-BSVER=debootstrap_1.0.25ubuntu2
-BSDIR=$(pwd)/debootstrap-1.0.25ubuntu2
+BSVER=debootstrap_1.0.27
+BSDIR=$(pwd)/debootstrap
 curl -s $BSURL/$BSVER.tar.gz |
   tar xz
 curl -s $BSURL/${BSVER}_all.deb > /tmp/${BSVER}_all.deb
